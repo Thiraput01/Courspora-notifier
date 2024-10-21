@@ -1,0 +1,3 @@
+.env
+bot/node_modules
+scrape/__pycache__

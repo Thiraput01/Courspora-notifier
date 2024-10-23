@@ -6,17 +6,22 @@ async function buildEmbedUser(courseInfo) {
   //     "name": "Corporate Finance #6 Management of Current Assets",
   //     "author": "Robert (Bob) Steele",
   //     "ratings": "4.5",
-  //     "url": "https://www.courspora.my.id/course/corporate-finance-6-management-of-current-assets"
+  //     "url": "https://www.courspora.my.id/course/corporate-finance-6-management-of-current-assets".
+  //     "img_url": "https://www.courspora.my.id/wp-content/uploads/2021/07/Corporate-Finance-6-Management-of-Current-Assets-300x169.jpg"
   // }
   const embed = new EmbedBuilder()
-    .setTitle("New Course Available!")
+    .setAuthor({
+      name: "A new course has been added.",
+      iconURL: "https://i.imgur.com/aliB1qK.png",
+    })
+    .setTitle(courseInfo.name)
+    .setURL(courseInfo.url)
     .setImage(courseInfo.img_url)
-    .setDescription(`A new course has been added.`)
-    .setColor("Random")
+    .setColor("#00FF00") // Use a valid color code or predefined color constant
     .addFields([
       { name: "Course Name", value: courseInfo.name },
       { name: "Author", value: courseInfo.author },
-      { name: "Rating", value: courseInfo.ratings },
+      { name: "Ratings", value: courseInfo.ratings },
     ]);
   return embed;
 }

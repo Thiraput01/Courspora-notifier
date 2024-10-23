@@ -10,6 +10,7 @@ async function buildEmbedUser(courseInfo) {
   // }
   const embed = new EmbedBuilder()
     .setTitle("New Course Available!")
+    .setImage(courseInfo.img_url)
     .setDescription(`A new course has been added.`)
     .setColor("Random")
     .addFields([

@@ -49,11 +49,13 @@ def check_new_content(driver):
                         author = course.find_element(By.XPATH, './/p[contains(@class, "text-muted-foreground")]').text
                         ratings = course.find_element(By.XPATH, './/div[contains(@class, "flex items-center gap-2")]/p').text
                         url = course.find_element(By.TAG_NAME, 'a').get_attribute('href')
+                        img_url = course.find_element(By.XPATH, './/img').get_attribute('src')
                         course_info = {
                             "name": title,
                             "author": author,
                             "ratings": ratings,
-                            "url": url
+                            "url": url,
+                            "img_url": img_url
                         }
                         logging.info(f'New content found: {course_info}')
                         send_to_discord(course_info)  # Send to Discord

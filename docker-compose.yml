@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web-scraper:
+    build: ./scrape
+    container_name: web_scraper
+    restart: unless-stopped
+    volumes:
+      - ./scrape:/app
+
+  discord-bot:
+    build: ./bot
+    container_name: discord_bot
+    restart: unless-stopped
+    volumes:
+      - ./bot:/app

@@ -11,5 +11,9 @@ services:
     build: ./bot
     container_name: discord_bot
     restart: unless-stopped
+    ports:
+      - "5000:5000"
     volumes:
       - ./bot:/app
+    env_file:
+      - .env

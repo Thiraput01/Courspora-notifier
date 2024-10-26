@@ -31,6 +31,7 @@ app.post("/send-course", (req, res) => {
     }
 
     sendMessageToChannels(courseInfo);
+    res.sendStatus(200);
   } catch (error) {
     console.error("Error sending message to channel:", error);
     res.status(500).send("Internal server error.");

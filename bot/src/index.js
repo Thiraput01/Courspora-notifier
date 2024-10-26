@@ -15,30 +15,36 @@ const client = new Client({
   ],
 });
 
-let targetChannels = new Map();
+let targetChannels = new Map(); // Too lazy to set up a database xD
 
 app.post("/send-course", (req, res) => {
-  const courseInfo = req.body;
+  try {
+    if (!req.body) {
+      res.status(400).send("missing request body");
+      return;
+    }
 
-  sendMessageToChannels(courseInfo);
-  res.sendStatus(200);
+    const courseInfo = req.body;
+    if (!courseInfo.name || !courseInfo.url || !courseInfo.img_url) {
+      res.status(400).send("Invalid course information.");
+      return;
+    }
+
+    sendMessageToChannels(courseInfo);
+  } catch (error) {
+    console.error("Error sending message to channel:", error);
+    res.status(500).send("Internal server error.");
+  }
 });
 
 function sendMessageToChannels(courseInfo) {
   targetChannels.forEach(async (channelId, guildId) => {
     try {
       const channel = await client.channels.fetch(channelId);
-
       const embed = await buildEmbedUser(courseInfo);
       await channel.send({ embeds: [embed] });
-      console.log(
-        `Message sent to channel: ${channel.name} in guild: ${guildId}`
-      );
     } catch (error) {
-      console.error(
-        `Error sending message to channel ${channelId} in guild ${guildId}:`,
-        error
-      );
+      message.channel.send("An error occurred while sending the embed.");
     }
   });
 }

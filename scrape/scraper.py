@@ -8,10 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from sender import send_to_discord
 
-# Set of seen courses
 prev_course = set()
 
-# Function to initialize Selenium WebDriver (called only once)
+# Initialize the WebDriver
 def init_driver():
     chrome_options = Options()
     chrome_options.add_argument('--headless')
@@ -20,18 +19,16 @@ def init_driver():
     chrome_options.add_argument('--disable-software-rasterizer')
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
-# Function to check for new content using Selenium, reusing the same driver
 def check_new_content(driver):
     global prev_course
     url = 'https://www.courspora.my.id/course'
     
     try:
         driver.get(url)
-        # Wait for the main element to load
         main_content = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, 'main'))
         )
-        # Find the ul element that holds the courses
+        
         course_list = main_content.find_element(By.CLASS_NAME, 'grid')
 
         # Extract course information

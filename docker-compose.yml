@@ -6,6 +6,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./scrape:/app
+    env_file:
+      - .env
+    networks:
+      - app-network
 
   discord-bot:
     build: ./bot
@@ -17,3 +21,9 @@ services:
       - ./bot:/app
     env_file:
       - .env
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

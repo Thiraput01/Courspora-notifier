@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-scraper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-scraper
+  template:
+    metadata:
+      labels:
+        app: web-scraper
+    spec:
+      containers:
+        - name: web-scraper
+          image: gcr.io/courspora-notifier/web-scraper
+          env:
+            - name: BOT_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: BOT_API_URL
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"

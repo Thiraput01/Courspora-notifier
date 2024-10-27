@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-bot
+  template:
+    metadata:
+      labels:
+        app: discord-bot
+    spec:
+      containers:
+        - name: discord-bot
+          image: gcr.io/courspora-notifier/discord-bot
+          ports:
+            - containerPort: 5000
+          env:
+            - name: TOKEN
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: TOKEN
+            - name: CHANNEL_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: CHANNEL_ID
+            - name: BOT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: BOT_ID
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: PORT
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"

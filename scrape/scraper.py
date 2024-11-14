@@ -36,6 +36,11 @@ def check_new_content(driver):
         seen_courses = set(course.text for course in courses)
         new_courses = seen_courses.difference(prev_course)
 
+        print("-"*50)
+        print("Seen Courses start:")
+        print(seen_courses)
+        print("Seen Courses end:")
+        print("-"*50)
         if not new_courses:
             logging.info('No new content found.')
         else:

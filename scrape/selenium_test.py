@@ -1,4 +1,6 @@
 import logging
+from selenium.common.exceptions import WebDriverException
+import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -46,18 +48,20 @@ def check_new_content(driver):
             except Exception as e:
                 logging.error(f'Error extracting course title: {e}')
                 continue
-            
-        # logging.info("-"*50)
-        # logging.info(f'Seen courses: {seen_courses}')
+        
+        print("-"*50)
+        print(f'Seen courses: {seen_courses}')
         new_courses = seen_courses.difference(prev_course)
-        # logging.info("-"*50)
-        # logging.info("\n")
-        # logging.info("-"*50)
-        # logging.info(f'New courses: {new_courses}')
-        # logging.info("-"*50)
+        print("-"*50)
+        print("\n")
+        print(f'Prev courses: {prev_course}')
+        print("\n")
+        print("-"*50)
+        print(f'New courses: {new_courses}')
+        print("-"*50)
         # 'MS-Excel For Civil Engineers for Project Planning From Zero\nAkshay Kamath\n4.5\n7 hour ago'
         if not new_courses:
-            logging.info('No new content found.')
+            print('No new content found.')
         else:
             for course in courses:
                 if course.text in new_courses:
@@ -74,10 +78,37 @@ def check_new_content(driver):
                             "url": url,
                             "img_url": img_url
                         }
-                        logging.info(f'New content found: {course_info}')
-                        send_to_discord(course_info)  # Send to Discord
+                        print(f'New content found: {course_info}')
+                        # send_to_discord(course_info)  # Send to Discord
                     except Exception as e:
                         logging.error(f'Error extracting course details: {e}')
             prev_course = seen_courses
     except Exception as e:
         logging.error(f'An error occurred: {e}')
+        
+        
+if __name__ == "__main__":
+    driver = init_driver()
+    try:
+        while True:
+            try:
+                print("Checking for new content...")
+                print("Checking for new content...")
+                check_new_content(driver)
+                time.sleep(60)
+
+            except WebDriverException as e:
+                logging.error(f"WebDriver encountered an error: {e}")
+                print("Attempting to reinitialize WebDriver...")
+                driver.quit()
+                driver = init_driver() # Reinitialize the WebDriver
+                print("WebDriver reinitialized successfully.")
+                
+    except KeyboardInterrupt:
+        print("Got KeyboardInterrupted")
+        
+    finally:
+        print("Closing the WebDriver")
+        driver.quit()
+        print("WebDriver closed")
+

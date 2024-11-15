@@ -1,0 +1,7 @@
+To run the pods
+
+kubectl apply -f env-config.yaml
+kubectl apply -f discord-bot-deployment.yaml
+kubectl apply -f discord-bot-service.yaml
+kubectl apply -f web-scraper-deployment.yaml
+kubectl apply -f web-scraper-service.yaml

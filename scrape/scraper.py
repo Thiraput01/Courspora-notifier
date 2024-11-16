@@ -10,7 +10,6 @@ from sender import send_to_discord
 
 prev_course = set()
 
-# Initialize the WebDriver
 def init_driver():
     chrome_options = Options()
     chrome_options.add_argument('--headless')
@@ -18,6 +17,24 @@ def init_driver():
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-software-rasterizer')
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
+def extract_course_info(course):
+    try:
+        title = course.find_element(By.TAG_NAME, 'h2').text
+        author = course.find_element(By.XPATH, './/p[contains(@class, "text-muted-foreground")]').text
+        ratings = course.find_element(By.XPATH, './/div[contains(@class, "flex items-center gap-2")]/p').text
+        url = course.find_element(By.TAG_NAME, 'a').get_attribute('href')
+        img_url = course.find_element(By.XPATH, './/img').get_attribute('src')
+        return {
+            "name": title,
+            "author": author,
+            "ratings": ratings,
+            "url": url,
+            "img_url": img_url
+        }
+    except Exception as e:
+        logging.error(f'Error extracting course details: {e}')
+        return None
 
 def check_new_content(driver):
     global prev_course
@@ -28,56 +45,27 @@ def check_new_content(driver):
         main_content = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, 'main'))
         )
-        
         course_list = main_content.find_element(By.CLASS_NAME, 'grid')
-
-        # Extract course information
-        courses = course_list.find_elements(By.TAG_NAME, 'li') # List of courses
+        courses = course_list.find_elements(By.TAG_NAME, 'li')
         
-        seen_courses = set()
-        for course in courses:
-            try:
-                text = course.text.split('\n')
-                title = text[0]
-                if title is None or title == '':  # Skip empty titles
-                    continue
-                seen_courses.add(title)
-                print(f'\nadded Course title: {title}\n')
-            except Exception as e:
-                logging.error(f'Error extracting course title: {e}')
-                continue
-            
-        # logging.info("-"*50)
-        # logging.info(f'Seen courses: {seen_courses}')
+        seen_courses = {course.text.split('\n')[0] for course in courses if course.text.split('\n')[0]}
+        
+        logging.info("-" * 50)
+        logging.info(f'Seen courses: {seen_courses}')
         new_courses = seen_courses.difference(prev_course)
-        # logging.info("-"*50)
-        # logging.info("\n")
-        # logging.info("-"*50)
-        # logging.info(f'New courses: {new_courses}')
-        # logging.info("-"*50)
-        # 'MS-Excel For Civil Engineers for Project Planning From Zero\nAkshay Kamath\n4.5\n7 hour ago'
+        logging.info(f'New courses: {new_courses}')
+        logging.info("-" * 50)
+        
         if not new_courses:
             logging.info('No new content found.')
         else:
             for course in courses:
-                if course.text in new_courses:
-                    try:
-                        title = course.find_element(By.TAG_NAME, 'h2').text
-                        author = course.find_element(By.XPATH, './/p[contains(@class, "text-muted-foreground")]').text
-                        ratings = course.find_element(By.XPATH, './/div[contains(@class, "flex items-center gap-2")]/p').text
-                        url = course.find_element(By.TAG_NAME, 'a').get_attribute('href')
-                        img_url = course.find_element(By.XPATH, './/img').get_attribute('src')
-                        course_info = {
-                            "name": title,
-                            "author": author,
-                            "ratings": ratings,
-                            "url": url,
-                            "img_url": img_url
-                        }
+                title = course.text.split('\n')[0]
+                if title in new_courses:
+                    course_info = extract_course_info(course)
+                    if course_info:
                         logging.info(f'New content found: {course_info}')
-                        send_to_discord(course_info)  # Send to Discord
-                    except Exception as e:
-                        logging.error(f'Error extracting course details: {e}')
+                        send_to_discord(course_info)
             prev_course = seen_courses
     except Exception as e:
         logging.error(f'An error occurred: {e}')

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: web-scraper
-          image: gcr.io/courspora-notifier/web-scraper
+          image: gcr.io/courspora-notifier/web-scraper:latest
           env:
             - name: BOT_API_URL
               valueFrom:

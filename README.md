@@ -2,6 +2,10 @@
 
 A Discord bot that monitors Courspora for new content updates and automatically sends notifications to designated channels in Discord servers. Built with Docker for simple deployment and management.
 
+
+https://github.com/user-attachments/assets/e7b9dc79-5582-4193-8e5d-abdfdcde806e
+
+
 ## Features
 
 - Automatically checks for new content updates on Courspora
